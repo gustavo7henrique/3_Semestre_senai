@@ -4,7 +4,7 @@ import rotasDepartamentos from "./src/routes/rotasDepartamentos.js";
 import rotasOrdemServicos from "./src/routes/rotasOrdemServicos.js";
 
 //Importando o Banco de Dados
-import {BD, testarConexao} from "./db.js";
+import { BD, testarConexao } from "./db.js";
 
 //Importando Swagger
 import swaggerUI from "swagger-ui-express";
@@ -15,7 +15,7 @@ const app = express();
 app.use(express.json());
 app.use('/swagger', swaggerUI.serve, swaggerUI.setup(documentacao))
 
-app.get('/', async(req, res)=> {
+app.get('/', async (req, res) => {
     await testarConexao();
     // res.status(200).json('API FUNCIONANDO ✅');
     res.redirect('/swagger')

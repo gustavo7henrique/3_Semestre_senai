@@ -34,3 +34,11 @@ insert into DEPARTAMENTOS(nome, descricao) VALUES('TI', 'Tecnologia da Informaç
 INSERT INTO ORDEM_SERVICOS (numero_ordem, titulo, descricao, prioridade, status, data, id_usuario, id_departamento)
   VALUES(1001, 'Trocar cabo de rede', 'Ponto de rede da sala 203 está sem conexão', 'media', 'aberta', '2026-02-26', 1, 1),
   ('1002', 'Consertar ar-condicionado', 'Unidade do laboratório parou de gelar', 'alta', 'em_andamento', '2026-02-26', 2, 2);
+
+
+create table TESTE(
+  id_usuario SERIAL primary key,
+  nome varchar(100) not null,
+  email varchar(150) not null,
+  senha varchar(255) not null
+);

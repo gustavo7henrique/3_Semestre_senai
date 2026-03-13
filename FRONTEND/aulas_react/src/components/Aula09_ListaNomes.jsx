@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Aula09_Nomes from "./Aula09_Nomes";
 
 const Aula09_Lista = () => {
@@ -8,19 +8,29 @@ const Aula09_Lista = () => {
 
     const limparLista = () => {
         setListaPresenca([]);
+        localStorage.removeItem('nome');
     };
 
     const botaoAdicionarNome = () => {
         if (nome === "") return;
 
-        setListaPresenca([...listaPresenca, nome]);
-        setNome("");
+        const novaLista = [...listaPresenca, nome];
+        setListaPresenca(novaLista);
+        localStorage.setItem('nome', JSON.stringify(novaLista));
     };
 
     const excluirPessoa = (index) => {
         const novaLista = listaPresenca.filter((_, i) => i !== index);
         setListaPresenca(novaLista);
-    }
+    };
+
+    //UseEffect
+    useEffect(() => {
+        const listaPresentes = localStorage.getItem('nome') || "[]";
+        setListaPresenca(JSON.parse(listaPresentes));
+    }, []);
+
+
 
     return (
         <div style={estilos.container}>
@@ -54,17 +64,18 @@ const Aula09_Lista = () => {
                 </div>
 
                 <div style={estilos.lista}>
-                    {listaPresenca.map((item, index) => (
-                        <Aula09_Nomes
-                            key={index}
-                            nome={item}
-                            index={index}
-                            excluir={excluirPessoa}
-                        />
-                    ))}
+                    {
+                        listaPresenca.map((item, index) => (
+                            <Aula09_Nomes
+                                key={index}
+                                nome={item}
+                                index={index}
+                                excluir={excluirPessoa} />
+                        ))
+                    }
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 

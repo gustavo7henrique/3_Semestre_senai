@@ -9,7 +9,7 @@ import { BD, testarConexao } from "./db.js";
 //Importando Swagger
 import swaggerUI from "swagger-ui-express";
 import documentacao from "./config/swagger.js";
-
+import cors from 'cors';
 
 const app = express();
 app.use(express.json());
@@ -25,6 +25,7 @@ app.get('/', async (req, res) => {
 app.use(rotasUsuarios);
 app.use(rotasDepartamentos);
 app.use(rotasOrdemServicos);
+app.use(cors());
 
 const porta = 3000;
 app.listen(porta, () => {

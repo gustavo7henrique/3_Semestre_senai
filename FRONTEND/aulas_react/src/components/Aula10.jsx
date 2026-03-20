@@ -9,7 +9,7 @@ const Aula10 = () => {
     //Esse efeito sempre será exectado sempre que  o "contador" mudar 
     useEffect(() => {
         console.log(contador);
-        document.title = `Contagem: ${contador}`
+        // document.title = `Contagem: ${contador}`
     }, [contador]);
 
     //O useEffect com [] vazia, significa que o efeito deve ser executado apenas quando a pagina é carregada

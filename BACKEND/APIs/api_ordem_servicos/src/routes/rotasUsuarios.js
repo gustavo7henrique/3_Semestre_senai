@@ -20,27 +20,6 @@ router.get('/usuarios', async (req, res) => {
     }
 });
 
-// //Criando o endpoint para listar todos os usuários
-// //O endpoint com parametrosdiretos no comando sql, permite o sql injection
-// router.post('/usuarios', async (req, res) => {
-//     try {
-//         const nome = req.body.nome;
-//         const email = req.body.email;
-//         const senha = req.body.senha;
-
-//         const comando = `INSERT INTO teste(nome, email, senha) 
-//         VALUES('${nome}', '${email}', '${senha}') `
-
-//         console.log(comando);
-//         await BD.query(comando);
-//         res.status(201).json('Usuário cadastrado');
-//     } catch (error) {
-//         console.error('Erro ao cadastrado usuarios', error.message);
-//         res.status(500).json({ error: 'Erro ao cadastrar usuarios' });
-//     }
-
-// });
-
 //endpoint seguro contra sql injection
 router.post('/usuarios', async (req, res) => {
 
@@ -62,9 +41,9 @@ router.post('/usuarios', async (req, res) => {
 
 //Endpoint para atualizar um unico usuario recebendo o parametro pelo id e buscando o usuario
 router.put('/usuarios/:id_usuario', async (req, res) => {
+
     //Id recebido via parametro 
     const { id_usuario } = req.params;
-
     //Dados do Usuario via corpo da pagina
     const { nome, email, senha } = req.body
 
@@ -86,5 +65,81 @@ router.put('/usuarios/:id_usuario', async (req, res) => {
         return res.status(500).json({ error: 'Erro ao atualizar usuarios' });
     }
 });
+
+//Rota Patch -> Atualizando parcialmente as informações
+router.patch('/usuarios/:id_usuario', async (req, res) => {
+
+    //Id recebido via parametro 
+    const { id_usuario } = req.params;
+    //Dados do Usuario via corpo da pagina
+    const { nome, email, senha } = req.body;
+
+    try {
+        //Verificar se o usuario existe
+        const verificarUsuario = await BD.query(`SELECT * FROM usuarios WHERE id_usuario = $1`, [id_usuario]);
+        if (verificarUsuario.rows.length === 0) {
+            return res.status(404).json({ message: 'Usuário não encontrado' })
+        }
+
+        //Montar o update dinanmicamente (apenas campos enviados)
+        const campos = [];
+        const valores = [];
+        let contador = 1;
+
+        if (nome !== undefined) {
+            campos.push(`nome = $${contador}`);
+            valores.push(nome);
+            contador++;
+        };
+
+        if (email !== undefined) {
+            campos.push(`email = $${contador}`);
+            valores.push(email);
+            contador++;
+        };
+
+        if (senha !== undefined) {
+            campos.push(`senha = $${contador}`);
+            valores.push(senha);
+            contador++;
+        };
+
+        //Se nenhum campo foi enviado
+        if (campos.length === 0) {
+            return res.status(400).json({ message: 'Nenhum campo a atualizar' });
+        };
+
+        //Adicionando o ID ao fianl de valores
+        valores.push(id_usuario);
+
+        //Monatndo a query dinamicamente
+        const comando = `UPDATE usuarios SET ${campos.join(`, `)} WHERE id_usuario = $${contador} `
+        await BD.query(comando, valores);
+
+        return res.status(200).json({ message: 'Usuário Atualizado com sucesso' })
+
+    } catch (error) {
+        console.error('Erro ao atualizar Usuário', error.message);
+        return res.status(500).json({ message: 'Erro interno no servidor' + error.message });
+    }
+});
+
+//Rota para DELETE -> deletar os usuários
+router.delete('/usuarios/:id_usuario', async (req, res) => {
+
+    //Id recebido via parametro 
+    const { id_usuario } = req.params;
+
+    try {
+        const comando = `DELETE FROM usuarios WHERE id_usuario = $1`
+        await BD.query(comando, [id_usuario]);
+        return res.status(200).json({ message: 'Usuário removido com sucesso' });
+
+    } catch (error) {
+        console.error('Erro ao deletar Usuário', error.message);
+        return res.status(500).json({ message: 'Erro interno no servidor' + error.message });
+    }
+});
+
 
 export default router;

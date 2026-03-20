@@ -22,6 +22,7 @@ const Aula11_CadastroProduto = () => {
             frete: true
         }
     ]);
+
     const [nome, setNome] = useState('');
     const [preco, setPreco] = useState('');
     const [imagem, setImagem] = useState('');
@@ -31,8 +32,34 @@ const Aula11_CadastroProduto = () => {
 
     //Arrow function para button Adicionar Produto
     const botaoAdiconarProduto = () => {
-        localStorage
+
+        const novoProduto = {
+            nome: nome,
+            preco: preco,
+            imagem: imagem,
+            link: link,
+            categoria: categoria,
+            frete: frete
+        };
+
+        const novaListaProdutos = [...listaProdutos, novoProduto];
+        setListaProdutos(novaListaProdutos);
+
+        localStorage.setItem('vetorListaProdutos', JSON.stringify(novaListaProdutos));
+
+        setNome('');
+        setPreco('');
+        setImagem('');
+        setLink('');
+        setCategoria('');
+        setFrete(false);
+
     }
+
+    useEffect(() => {
+        const listaSalva = localStorage.getItem('vetorListaProdutos') || '[]';
+        setListaProdutos(JSON.parse(listaSalva));
+    }, []);
 
     return (
         <div >
@@ -46,7 +73,7 @@ const Aula11_CadastroProduto = () => {
                 <input type="number" placeholder="Preço" value={preco} onChange={(event) => setPreco(event.target.value)} />
 
                 {/*Input Imagem Produto*/}
-                <input type="text" placeholder="Imagem do Produto" value={imagem} onChange={(event) => setImagem(event.target.value)} />
+                <input type="text" placeholder="Link da Imagem do Produto" value={imagem} onChange={(event) => setImagem(event.target.value)} />
 
                 {/*Input Link Produto*/}
                 <input type="text" placeholder="Link do Produto" value={link} onChange={(event) => setLink(event.target.value)} />
@@ -55,38 +82,38 @@ const Aula11_CadastroProduto = () => {
                 <select name="categorias" value={categoria} onChange={(event) => setCategoria(event.target.value)}>
 
                     {/*Eletronicos*/}
-                    <option value="eletronicos">Eletrônicos</option>
+                    <option value="Eletronicos">Eletrônicos</option>
 
                     {/*Eletrodomesticos*/}
-                    <option value="eletrodomesticos">Eletrodomésticos</option>
+                    <option value="Eletrodomesticos">Eletrodomésticos</option>
 
                     {/*Decoração*/}
-                    <option value="decoracao">Decoração de Casa</option>
+                    <option value="Decoracao">Decoração de Casa</option>
 
                     {/*Cosméticos*/}
-                    <option value="cosmeticos">Cosméticos</option>
+                    <option value="Cosmeticos">Cosméticos</option>
 
                 </select>
 
                 {/*Input Checkbox Frete*/}
-                <label><input type="checkbox" checked={frete} onChange={(event) => setFrete(event.target.value)} />Frete Grátis</label>
+                <label><input type="checkbox" checked={frete} onChange={(event) => setFrete(event.target.checked)} />Frete Grátis</label>
 
                 {/*Button Adicionar Produto*/}
                 <button onClick={botaoAdiconarProduto}>Adicionar Produto</button>
                 <hr />
                 <br />
 
-                <div style={{display: "flex", gap: 10, flexWrap: "wrap"}}>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                     {
-                        listaProdutos.map( (produto, pos) => (
+                        listaProdutos.map((produto, pos) => (
                             // <p key={pos}> {produto.nome} - R$ {produto.preco} </p>
                             <Aula11_Produto key={pos} produto={produto} />
-                        ) )
+                        ))
                     }
                 </div>
 
             </div>
-                    
+
         </div>
 
 

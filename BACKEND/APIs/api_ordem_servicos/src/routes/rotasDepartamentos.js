@@ -68,5 +68,74 @@ router.put('/departamentos/:id_departamento', async (req, res) => {
     }
 });
 
+//Rota Patch -> Atualizando parcialmente as informações
+router.patch('/departamentos/:id_departamento', async (req, res) => {
+
+    //Id recebido via parametro 
+    const { id_departamento } = req.params;
+    //Dadepartamentoid_departamento via corpo da pagina
+    const { nome, descricao } = req.body
+
+    try {
+         //Verificar se o departamento existe
+        const verificarDepartamento = await BD.query(`SELECT * FROM departamentos WHERE id_departamento = $1`, [id_departamento]);
+        if (verificarDepartamento.rows.length === 0) {
+            return res.status(404).json({ message: 'Departamento não encontrado' })
+        }
+
+        //Montar o update dinanmicamente (apenas campos enviados)
+        const campos = [];
+        const valores = [];
+        let contador = 1;
+
+        if (nome !== undefined) {
+            campos.push(`nome = $${contador}`);
+            valores.push(nome);
+            contador++;
+        };
+
+        if (descricao !== undefined) {
+            campos.push(`descricao = $${contador}`);
+            valores.push(descricao);
+            contador++;
+        };
+
+        //Se nenhum campo foi enviado
+        if (campos.length === 0) {
+            return res.status(400).json({ message: 'Nenhum campo a atualizar' });
+        };
+
+        //Adicionando o ID ao fianl de valores
+        valores.push(id_departamento);
+
+        //Monatndo a query dinamicamente
+        const comando = `UPDATE departamentos SET ${campos.join(`, `)} WHERE id_departamento = $${contador} `
+        await BD.query(comando, valores);
+
+        return res.status(200).json({ message: 'Departamento Atualizado com sucesso' })
+
+    } catch (error) {
+        console.error('Erro ao atualizar Departamento', error.message);
+        return res.status(500).json({ message: 'Erro interno no servidor ' + error.message });
+    }
+});
+
+//Rota para DELETE -> deletar os departamentos
+router.delete('/departamentos/:id_departamento', async (req, res) => {
+
+    //Id recebido via parametro 
+    const { id_departamento } = req.params;
+
+    try {
+        const comando = `DELETE FROM departamentos WHERE id_departamento = $1`
+        await BD.query(comando, [id_departamento]);
+        return res.status(200).json({ message: 'Departamento removido com sucesso' });
+
+    } catch (error) {
+        console.error('Erro ao deletar Departamento', error.message);
+        return res.status(500).json({ message: 'Erro interno no servidor' + error.message });
+    }
+});
+
 
 export default router;

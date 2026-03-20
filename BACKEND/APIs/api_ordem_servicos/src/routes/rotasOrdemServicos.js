@@ -73,5 +73,111 @@ router.put('/ordem-servicos/:id_ordem', async (req, res) => {
     }
 });
 
+//Rota Patch -> Atualizando parcialmente as informações
+router.patch('/ordem-servicos/:id_ordem', async (req, res) => {
+
+    //Id recebido via parametro 
+    const { id_ordem } = req.params;
+    //Dadepartamentoid_departamento via corpo da pagina
+    const {  numero_ordem, titulo, descricao, prioridade, status, data, id_usuario, id_departamento } = req.body
+
+    try {
+        //Verificar se o ordem existe
+        const verificarOrdem = await BD.query(`SELECT * FROM ordem_servicos WHERE id_ordem = $1`, [id_ordem]);
+        if (verificarOrdem.rows.length === 0) {
+            return res.status(404).json({ message: 'Ordem de Serviço não encontrada' })
+        }
+
+        //Montar o update dinanmicamente (apenas campos enviados)
+        const campos = [];
+        const valores = [];
+        let contador = 1;
+
+        if (numero_ordem !== undefined) {
+            campos.push(`numero_ordem = $${contador}`);
+            valores.push(numero_ordem);
+            contador++;
+        };
+
+        if (titulo !== undefined) {
+            campos.push(`titulo = $${contador}`);
+            valores.push(titulo);
+            contador++;
+        };
+
+        if (descricao !== undefined) {
+            campos.push(`descricao = $${contador}`);
+            valores.push(descricao);
+            contador++;
+        };
+
+        if (prioridade !== undefined) {
+            campos.push(`prioridade = $${contador}`);
+            valores.push(prioridade);
+            contador++;
+        };
+
+        if (status !== undefined) {
+            campos.push(`status = $${contador}`);
+            valores.push(status);
+            contador++;
+        };
+
+        if (data !== undefined) {
+            campos.push(`data = $${contador}`);
+            valores.push(data);
+            contador++;
+        };
+
+        if (id_usuario !== undefined) {
+            campos.push(`id_usuario = $${contador}`);
+            valores.push(id_usuario);
+            contador++;
+        };
+
+        if (id_departamento !== undefined) {
+            campos.push(`id_departamento = $${contador}`);
+            valores.push(id_departamento);
+            contador++;
+        };
+
+
+        //Se nenhum campo foi enviado
+        if (campos.length === 0) {
+            return res.status(400).json({ message: 'Nenhum campo a atualizar' });
+        };
+
+        //Adicionando o ID ao fianl de valores
+        valores.push(id_ordem);
+
+        //Monatndo a query dinamicamente
+        const comando = `UPDATE ordem_servicos SET ${campos.join(`, `)} WHERE id_ordem = $${contador} `
+        await BD.query(comando, valores);
+
+        return res.status(200).json({ message: 'Ordem de Serviço Atualizado com sucesso' })
+
+    } catch (error) {
+        console.error('Erro ao atualizar Ordem de Serviço', error.message);
+        return res.status(500).json({ message: 'Erro interno no servidor ' + error.message });
+    }
+});
+
+//Rota para DELETE -> deletar a ordens de serviços
+router.delete('/ordem-servicos/:id_ordem', async (req, res) => {
+
+    //Id recebido via parametro 
+    const { id_ordem } = req.params;
+
+    try {
+        const comando = `DELETE FROM ordem_servicos WHERE id_ordem = $1`
+        await BD.query(comando, [id_ordem]);
+        return res.status(200).json({ message: 'Ordem de Serviço removida com sucesso' });
+
+    } catch (error) {
+        console.error('Erro ao deletar Ordem de Serviço', error.message);
+        return res.status(500).json({ message: 'Erro interno no servidor' + error.message });
+    }
+});
+
 
 export default router;

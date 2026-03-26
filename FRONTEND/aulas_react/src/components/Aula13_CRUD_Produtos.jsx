@@ -60,11 +60,11 @@ const Aula13_CRUD_Produtos = () => {
 
         try {
 
-            let endpoint = 'http://10.130.42.68:3001/produtos';
+            let endpoint = 'http://localhost:3000/produtos';
             let metodo = 'POST';
 
             if (editando == true) {
-                endpoint = `http://10.130.42.68:3001/produtos/${id}`
+                endpoint = `http://localhost:3000/produtos/${id}`
                 metodo = 'PUT'
             }
 
@@ -101,7 +101,7 @@ const Aula13_CRUD_Produtos = () => {
         if (!window.confirm(`Deseja mesmo Excluir?`)) return
 
         try {
-            const resposta = await fetch(`http://10.130.42.68:3001/produtos/${id_produto}`, {
+            const resposta = await fetch(`http://localhost:3000/produtos${id_produto}`, {
                 method: 'DELETE'
             });
 
@@ -139,7 +139,8 @@ const Aula13_CRUD_Produtos = () => {
     //Função para buscar os dados de uma API 
     async function buscarDados() {
 
-        const resposta = await fetch('http://10.130.42.68:3001/produtos');
+        const resposta = await fetch('http://localhost:3000/produtos');
+        // const resposta = await fetch('http://10.130.42.68:3001/produtos');
         const dados = await resposta.json();
         setListaProdutos(dados);
 

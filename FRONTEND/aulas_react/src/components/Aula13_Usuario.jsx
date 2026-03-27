@@ -1,34 +1,41 @@
-const Aula13_Usuario = ({ usuario, botaoExcluir, botaoAlterar }) => {
 
+const Aula13_Usuario = ({ usuario, botaoExcluir }) => {
     return (
-        <div style={estilos.cardUsuario}>
-
-            <h2 style={estilos.nomeUsuario}>{usuario.nome}</h2>
-
-            <p style={estilos.nomeUsuario}>{usuario.email}</p>
-
-             <button onClick={() => botaoExcluir(usuario.id_usuario)} style={estilos.botao}>Excluir</button>
-             <button onClick={() => botaoAlterar(usuario)} style={estilos.botao}>Alterar</button>
-
-
+        <div style={estilos.cardProduto}>
+            <h2 style={estilos.titulo}>{usuario.nome}</h2>
+            <h2 style={estilos.titulo}>{usuario.email}</h2>            
+            <button style={estilos.botao} onClick={() => botaoExcluir(usuario.id_usuario)} >Excluir</button>
         </div>
     )
-};
+}
 
 const estilos = {
-    cardUsuario: {
+    cardProduto: {
         border: "1px solid #ccc",
         padding: 10,
-        width: 250
+        width: 250, 
+        textAlign: 'center'
     },
 
-    nomeUsuario: {
+    imagem: {
+        height: 150,
+        width: "100%",
+        objectFit: "contain"
+    },
+
+    titulo: {
         fontSize: 14,
         color: "#333",
         textAlign: "center"
     },
 
-     botao: {
+    preco: {
+        fontSize: 24,
+        fontWeight: "bold",
+        color: "#e30613"
+    },
+
+    botao: {
         display: "inline-block",
         background: "#e30613",
         color: "white",
@@ -36,11 +43,12 @@ const estilos = {
         padding: "8px 12px",
         borderRadius: 5,
         marginTop: 10,
-        fontWeight: "bold",
-        gap: '10px',
-        cursor: 'pointer'
+        fontWeight: "bold"
+    },
+
+    freteGratis: {
+        fontWeight: "bold"
     }
 };
 
-
-export default Aula13_Usuario;
+export default Aula13_Usuario

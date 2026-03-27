@@ -4,7 +4,6 @@ const Perfil = () => {
 
     const { nome } = useParams();
 
-
     return (
         <div>
             <h1>Este é o perfil de {nome}</h1>

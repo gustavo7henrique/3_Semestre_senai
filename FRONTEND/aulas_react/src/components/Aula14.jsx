@@ -31,6 +31,20 @@ const Aula14 = () => {
             <br />
             <h3>Rota dinâmica com useParams</h3>
             <button onClick={() => navigate('/perfil/Gustavo')}>Perfil do Gustavo Henrique </button>
+            <br />
+
+            <br />
+            <hr />
+            <br />
+            <h3>Exercícios</h3>
+            <br />
+
+            <p>Exercício 1</p>
+            <Link to={'/inicio'} > Página Início </Link>
+            <br />
+            <br />
+            <p>Exercício 2</p>
+            <button onClick={() => navigate('/filme/1')}>Ver detalhes do Filme</button>
 
         </div>
     )

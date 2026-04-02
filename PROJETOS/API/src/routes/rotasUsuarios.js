@@ -51,7 +51,7 @@ router.put('/usuarios/:id_usuario', async (req, res) => {
     //Id recebido via parametro 
     const { id_usuario } = req.params;
     //Dados do Usuario via corpo da pagina
-    const { nome, email, senha, tipo_acesso} = req.body
+    const { nome, email, senha, tipo_acesso, ativo} = req.body
 
     try {
 
@@ -67,8 +67,8 @@ router.put('/usuarios/:id_usuario', async (req, res) => {
         const senhaCriptografada = await bcrypt.hash(senha, saltRounds);
 
         //Atualiza todos os campos da tabela(PUT substituição completa)
-        const comando = `UPDATE usuarios SET nome = $1, email = $2, senha = $3, tipo_acesso = $4 WHERE id_usuario = $5`;
-        const valores = [nome, email, senhaCriptografada, tipo_acesso, id_usuario];
+        const comando = `UPDATE usuarios SET nome = $1, email = $2, senha = $3, tipo_acesso = $4, ativo =$5 WHERE id_usuario = $6`;
+        const valores = [nome, email, senhaCriptografada, tipo_acesso, ativo, id_usuario];
         await BD.query(comando, valores);
 
         return res.status(200).json('Usuário atualizado com sucesso')
@@ -112,15 +112,15 @@ router.post('/login', async (req, res) => {
         const resultado = await BD.query(comando, [email]);
 
         if (resultado.rows.length === 0) {
-            return res.return(401).json({ message: 'Email não encontrado' });
+            return res.status(401).json({ message: 'Email não encontrado' });
         };
 
         const usuario = resultado.rows[0];
-        const senhaCorreta = await bycript.compare(senha, usuario.senha)
+        const senhaCorreta = await bcrypt.compare(senha, usuario.senha)
 
         //Verificar Senha se são iguais
         if (!senhaCorreta ) {
-            return res.return(401).json({ message: 'Senha inválida' });
+            return res.status(401).json({ message: 'Senha inválida' });
         }
 
         return res.status(200).json({

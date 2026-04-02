@@ -1,6 +1,7 @@
 import express from 'express';
 import rotasUsuarios from "./src/routes/rotasUsuarios.js";
-
+import rotasCategorias from "./src/routes/rotasCategorias.js";
+import rotasSubCategorias from "./src/routes/rotasSubCategorias.js";
 
 //Importando o Banco de Dados
 import { BD, testarConexao } from "./db.js";
@@ -22,6 +23,8 @@ app.get('/', async (req, res) => {
 
 //Utilizando Rotas
 app.use(rotasUsuarios);
+app.use(rotasCategorias);
+app.use(rotasSubCategorias);
 app.use(cors());
 
 const porta = 3000;

@@ -21,7 +21,7 @@ ativo boolean default false
 create table subcategorias(
 id_subcategoria SERIAL primary key,
 nome varchar(100) not null,
-ativo boolean default false,
+ativo boolean default true,
 id_categoria INT,
 foreign key (id_categoria) references categorias(id_categoria)
 );
@@ -31,7 +31,7 @@ id_transacao SERIAL PRIMARY KEY,
 valor NUMERIC(12,2) NOT NULL,
 descricao TEXT,
 data_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-dat_pagamento DATE,
+data_pagamento DATE,
 data_vencimento DATE,
 tipo CHAR(1),
 id_categoria INT,

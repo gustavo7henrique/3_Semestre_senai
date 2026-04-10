@@ -14,9 +14,12 @@ const documentacao = {
         }
     ],
     tags: [
+        { name: "Autenticação", description: "Login do Usuário" },
         { name: "Usuários", description: "Operações relacionadas aos usuários" },
         { name: "Categorias", description: "Operações relacionadas as categorias" },
-        { name: "SubCategorias", description: "Operações relacionadas as subcategorias" }
+        { name: "SubCategorias", description: "Operações relacionadas as subcategorias" },
+        { name: "Transações", description: "Operações relacionadas as transações" }
+
     ],
     paths: {
         "/usuarios": {
@@ -374,6 +377,113 @@ const documentacao = {
                 }
             }
         },
+        "/transacoes": {
+            get: {
+                tags: ["Transações"],
+                summary: "Listar Transações",
+                responses: {
+                    200: {
+                        description: "Dados obtidos com sucesso",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: { $ref: "#/components/schemas/Lista_Transacoes" }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            post: {
+                tags: ["Transações"],
+                summary: "Cadastrar nova transação ",
+                description: "Recebe valor, descricao, data_registro, data_pagamento, data_vencimento, tipo, id_categoria, id_subcategoria  para cadastrar nova transacao",
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/Cadastro_Transacoes"
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    201: {
+                        description: "Transação cadastrada com sucesso"
+                    },
+                    400: {
+                        description: "Erro na requisição(preencha todos os campos)"
+                    },
+                    500: {
+                        description: "Erro interno so Servidor"
+                    }
+                }
+            }
+        },
+        "/transacoes/{id_transacao}":{
+             put: {
+                tags: ["Transações"],
+                summary: "Atualizar transação completa",
+                description: "Atualiza todos os campos de uma transação existente",
+                parameters: [
+                    {
+                        name: "id_transacao",
+                        in: "path",
+                        required: true,
+                        description: "Id da transacao a ser atualizada",
+                        schema: { type: 'integer' },
+                        example: 1
+                    }
+                ],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: { $ref: "#/components/schemas/Atualizacao_Transacoes" }
+                        }
+                    }
+                },
+                responses: {
+                    200: {
+                        description: "Transação atualizada com sucesso",
+                        content: { "application/json": { example: "Transação atualizada com sucesso" } }
+                    },
+                    404: {
+                        description: "Transação não encontrada",
+                        content: { "application/json": { example: "Transação não encontrada" } }
+                    },
+                    500: {
+                        description: "Erro no Servidor"
+                    }
+                }
+            },
+            delete: {
+                tags: ["Transações"],
+                summary: "Excluir a transação",
+                description: "Exclui a transação",
+                parameters: [
+                    {
+                        name: "id_transacao",
+                        in: "path",
+                        required: true,
+                        description: "Id da transação a ser excluída",
+                        schema: { type: 'integer' },
+                        example: 1
+                    }
+                ],
+                responses: {
+                    200: {
+                        description: "Transação excluída com sucesso",
+                        content: { "application/json": { example: "Transação não encontrada" } }
+                    },
+                    500: {
+                        description: "Erro no Servidor"
+                    }
+                }
+            }
+        }
     },
     components: {
         schemas: {
@@ -451,7 +561,7 @@ const documentacao = {
                     ativo: { type: "boolean", example: true }
                 }
             },
-             Atualizacao_Categoria: {
+            Atualizacao_Categoria: {
                 type: "object",
                 required: ["nome", "descricao", "tipo", "cor", "icone", "ativo"],
                 properties: {
@@ -480,13 +590,54 @@ const documentacao = {
                     id_categoria: { type: "integer", example: 1 }
                 }
             },
-             Atualizacao_SubCategoria: {
+            Atualizacao_SubCategoria: {
                 type: "object",
                 required: ["nome", "ativo", "id_categoria"],
                 properties: {
                     nome: { type: "string", example: "subcategoria" },
                     ativo: { type: "boolean", example: true },
                     id_categoria: { type: "integer", example: 1 },
+                }
+            },
+            Lista_Transacoes: {
+                type: "object",
+                properties: {
+                    id: { type: "integer", example: 1 },
+                    valor: { type: "string", example: "20" },
+                    descricao: { type: "string", example: "Compras" },
+                    data_registro: { type: "string", example: "09/04/2026" },
+                    data_vencimento: { type: "string", example: "09/04/2026" },
+                    data_pagamento: { type: "string", example: "09/04/2026" },
+                    tipo: { type: "string", example: "E" },
+                    nome_categoria: { type: "string", example: "Alimentação" },
+                    nome_subcategoria: { type: "string", example: "Mercado" }
+                }
+            },
+            Cadastro_Transacoes: {
+                type: "object",
+                properties: {
+                    valor: { type: "number", example: "100.00" },
+                    descricao: { type: "string", example: "descricao" },
+                    data_registro: { type: "string", example: "09/04/2026" },
+                    data_vencimento: { type: "string", example: "09/04/2026" },
+                    data_pagamento: { type: "string", example: "09/04/2026" },
+                    tipo: { type: "string", example: "E" },
+                    id_categoria: { type: "integer", example: 1 },
+                    id_subcategoria: { type: "integer", example: 1 }
+                }
+            },
+            Atualizacao_Transacoes: {
+                type: "object",
+                required: ["valor", "descricao", "data_registro", "data_pagamento", "data_vencimento", "tipo", "id_categoria", "id_subcategoria"],
+                properties: {
+                    valor: { type: "number", example: "00.00" },
+                    descricao: { type: "string", example: "nova_descricao" },
+                    data_registro: { type: "string", example: "01/01/2026" },
+                    data_vencimento: { type: "string", example: "01/01/2026" },
+                    data_pagamento: { type: "string", example: "01/01/2026" },
+                    tipo: { type: "string", example: "S" },
+                    id_categoria: { type: "integer", example: 1 },
+                    id_subcategoria: { type: "integer", example: 1 }
                 }
             }
         }

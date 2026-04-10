@@ -422,8 +422,8 @@ const documentacao = {
                 }
             }
         },
-        "/transacoes/{id_transacao}":{
-             put: {
+        "/transacoes/{id_transacao}": {
+            put: {
                 tags: ["Transações"],
                 summary: "Atualizar transação completa",
                 description: "Atualiza todos os campos de uma transação existente",
@@ -483,7 +483,129 @@ const documentacao = {
                     }
                 }
             }
+        },
+        "/transacoes/periodo": {
+            get: {
+                tags: ["Transações"],
+                summary: "Listar Transações por Periodo",
+                parameters: [
+                    {
+                        name: 'inicio',
+                        in: 'query',
+                        required: true,
+                        description: 'Data de inicio do periodo',
+                        schema: { type: "string", example: "28/02/2026" }
+                    },
+                    {
+                        name: 'fim',
+                        in: 'query',
+                        required: true,
+                        description: 'Data de fim do periodo',
+                        schema: { type: "string", example: "10/04/2026" }
+                    },
+
+                ],
+                responses: {
+                    200: {
+                        description: "Dados obtidos com sucesso",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: { $ref: "#/components/schemas/Lista_Transacoes" }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        },
+        "/transacoes/categoria/{id_categoria}": {
+            get: {
+                tags: ["Transações"],
+                summary: "Listar Transações por id_categoria",
+                parameters: [
+                    {
+                        name: 'id_categoria',
+                        in: 'path',
+                        required: true,
+                        description: 'Id da categoria',
+                        schema: { type: "integer", example: 2 }
+                    }
+                ],
+                responses: {
+                    200: {
+                        description: "Dados obtidos com sucesso",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: { $ref: "#/components/schemas/Lista_Transacoes" }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        },
+        "/transacoes/categoria/{id_subcategoria}": {
+            get: {
+                tags: ["Transações"],
+                summary: "Listar Transações por id_subcategoria",
+                parameters: [
+                    {
+                        name: 'id_subcategoria',
+                        in: 'path',
+                        required: true,
+                        description: 'Id da subcategoria',
+                        schema: { type: "integer", example: 2 }
+                    }
+                ],
+                responses: {
+                    200: {
+                        description: "Dados obtidos com sucesso",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: { $ref: "#/components/schemas/Lista_Transacoes" }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        },
+        "/transacoes/tipo": {
+            get: {
+                tags: ["Transações"],
+                summary: "Listar Transações por tipo",
+                parameters: [
+                    {
+                        name: "tipo",
+                        in: "query",
+                        required: true,
+                        description: "Tipo transação (E = entrada / S = saída)",
+                        schema: { type: 'string', example: 'S' },
+                    },
+
+                ],
+                responses: {
+                    200: {
+                        description: "Dados obtidos com sucesso",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: { $ref: "#/components/schemas/Lista_Transacoes" }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
+
     },
     components: {
         schemas: {

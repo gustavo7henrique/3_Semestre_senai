@@ -29,6 +29,140 @@ router.get('/transacoes', async (req, res) => {
     }
 });
 
+//Listar transações por tipo
+router.get('/transacoes/tipo', async (req, res) => {
+
+    //Requisicao a partir de uma query
+    const { tipo } = req.query;
+
+    try {
+        if (!tipo) {
+            return res.status(400).json({ message: 'Informe o tipo de transação' })
+        };
+
+        const comando = `SELECT t.id_transacao, t.valor, t.descricao, 
+            TO_CHAR(t.data_registro, 'DD/MM/YYYY') AS data_registro,
+            TO_CHAR(t.data_vencimento, 'DD/MM/YYYY') AS data_vencimento,
+            TO_CHAR(t.data_pagamento, 'DD/MM/YYYY') AS data_pagamento,
+            t.tipo, 
+            c.nome AS nome_categoria,
+            s.nome AS nome_subcategoria
+            FROM transacoes t
+            LEFT JOIN categorias c ON t.id_categoria = c.id_categoria
+            LEFT JOIN subcategorias s ON t.id_subcategoria = s.id_subcategoria 
+            WHERE t.tipo = $1
+            ORDER BY t.data_registro DESC `;
+
+        //Cria uma variável para receber o retorno do SQL
+        const transacoes = await BD.query(comando, [tipo]);
+
+        //Retorno para a pagina, o json com os dados buscados do SQL
+        res.status(200).json(transacoes.rows);
+    }
+    catch (error) {
+        console.error(' ❌ ERRO AO LISTAR TRANSAÇÕES ❌ ', error.message);
+        res.status(500).json({ error: '❌ ERRO AO LISTAR TRANSAÇÕES ❌' + error.message })
+    }
+});
+
+//Listar transações por período
+router.get('/transacoes/periodo', async (req, res) => {
+
+    //Requisicao a partir de uma query
+    const { inicio, fim } = req.query;
+
+    try {
+        if (!inicio || !fim) {
+            return res.status(400).json({ message: 'Informe as datas de inicio e fim' })
+        }
+
+        const comando = `SELECT t.id_transacao, t.valor, t.descricao, 
+            TO_CHAR(t.data_registro, 'DD/MM/YYYY') AS data_registro,
+            TO_CHAR(t.data_vencimento, 'DD/MM/YYYY') AS data_vencimento,
+            TO_CHAR(t.data_pagamento, 'DD/MM/YYYY') AS data_pagamento,
+            t.tipo, 
+            c.nome AS nome_categoria,
+            s.nome AS nome_subcategoria
+            FROM transacoes t
+            LEFT JOIN categorias c ON t.id_categoria = c.id_categoria
+            LEFT JOIN subcategorias s ON t.id_subcategoria = s.id_subcategoria 
+            WHERE t.data_registro BETWEEN TO_DATE($1, 'DD/MM/YYYY') AND TO_DATE($2, 'DD/MM/YYYY')
+            ORDER BY t.data_registro DESC `;
+
+        //Cria uma variável para receber o retorno do SQL
+        const transacoes = await BD.query(comando, [inicio, fim]);
+
+        //Retorno para a pagina, o json com os dados buscados do SQL
+        res.status(200).json(transacoes.rows);
+    }
+    catch (error) {
+        console.error(' ❌ ERRO AO LISTAR TRANSAÇÕES ❌ ', error.message);
+        res.status(500).json({ error: '❌ ERRO AO LISTAR TRANSAÇÕES ❌' + error.message })
+    }
+});
+
+//Listar transações por id_categoria
+router.get('/transacoes/categoria/:id_categoria', async (req, res) => {
+
+    const { id_categoria } = req.params;
+
+    try {
+        const comando = `SELECT t.id_transacao, t.valor, t.descricao, 
+            TO_CHAR(t.data_registro, 'DD/MM/YYYY') AS data_registro,
+            TO_CHAR(t.data_vencimento, 'DD/MM/YYYY') AS data_vencimento,
+            TO_CHAR(t.data_pagamento, 'DD/MM/YYYY') AS data_pagamento,
+            t.tipo, 
+            c.nome AS nome_categoria,
+            s.nome AS nome_subcategoria
+            FROM transacoes t
+            LEFT JOIN categorias c ON t.id_categoria = c.id_categoria
+            LEFT JOIN subcategorias s ON t.id_subcategoria = s.id_subcategoria 
+            WHERE t.id_categoria= $1 
+            ORDER BY t.data_registro DESC `;
+
+        //Cria uma variável para receber o retorno do SQL
+        const transacoes = await BD.query(comando, [id_categoria]);
+
+        //Retorno para a pagina, o json com os dados buscados do SQL
+        res.status(200).json(transacoes.rows);
+    }
+    catch (error) {
+        console.error(' ❌ ERRO AO LISTAR TRANSAÇÕES ❌ ', error.message);
+        res.status(500).json({ error: '❌ ERRO AO LISTAR TRANSAÇÕES ❌' + error.message })
+    }
+});
+
+//Listar transações por id_categoria
+router.get('/transacoes/subcategoria/:id_subcategoria', async (req, res) => {
+
+    const { id_subcategoria } = req.params;
+
+    try {
+        const comando = `SELECT t.id_transacao, t.valor, t.descricao, 
+            TO_CHAR(t.data_registro, 'DD/MM/YYYY') AS data_registro,
+            TO_CHAR(t.data_vencimento, 'DD/MM/YYYY') AS data_vencimento,
+            TO_CHAR(t.data_pagamento, 'DD/MM/YYYY') AS data_pagamento,
+            t.tipo, 
+            c.nome AS nome_categoria,
+            s.nome AS nome_subcategoria
+            FROM transacoes t
+            LEFT JOIN categorias c ON t.id_categoria = c.id_categoria
+            LEFT JOIN subcategorias s ON t.id_subcategoria = s.id_subcategoria 
+            WHERE t.id_subcategoria= $1 
+            ORDER BY t.data_registro DESC `;
+
+        //Cria uma variável para receber o retorno do SQL
+        const transacoes = await BD.query(comando, [id_subcategoria]);
+
+        //Retorno para a pagina, o json com os dados buscados do SQL
+        res.status(200).json(transacoes.rows);
+    }
+    catch (error) {
+        console.error(' ❌ ERRO AO LISTAR TRANSAÇÕES ❌ ', error.message);
+        res.status(500).json({ error: '❌ ERRO AO LISTAR TRANSAÇÕES ❌' + error.message })
+    }
+});
+
 //endpoint seguro contra sql injection
 router.post('/transacoes', async (req, res) => {
 

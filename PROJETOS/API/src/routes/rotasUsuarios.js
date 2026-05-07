@@ -1,11 +1,14 @@
 import express, { Router } from "express";
 import { BD } from "../../db.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { autenticarToken } from "../middlewares/autenticacao.js";
 
 const router = Router();
+const SECRET_KEY = 'minha chave secreta';
 
 //Criando o endpoint para listar todos os usuários
-router.get('/usuarios', async (req, res) => {
+router.get('/usuarios', autenticarToken, async (req, res) => {
     try {
         const query = `SELECT * FROM usuarios WHERE ativo = true ORDER BY id_usuario `;
 
@@ -24,7 +27,7 @@ router.get('/usuarios', async (req, res) => {
 //endpoint seguro contra sql injection
 router.post('/usuarios', async (req, res) => {
 
-    const { nome, email, senha, tipo_acesso} = req.body;
+    const { nome, email, senha, tipo_acesso } = req.body;
 
     try {
         //definir a força da criptografia
@@ -51,7 +54,7 @@ router.put('/usuarios/:id_usuario', async (req, res) => {
     //Id recebido via parametro 
     const { id_usuario } = req.params;
     //Dados do Usuario via corpo da pagina
-    const { nome, email, senha, tipo_acesso, ativo} = req.body
+    const { nome, email, senha, tipo_acesso, ativo } = req.body
 
     try {
 
@@ -80,7 +83,7 @@ router.put('/usuarios/:id_usuario', async (req, res) => {
 });
 
 //Rota para DELETE -> desativa os usuários
-router.delete('/usuarios/:id_usuario', async (req, res) => {
+router.delete('/usuarios/:id_usuario', autenticarToken, async (req, res) => {
 
     //Id recebido via parametro 
     const { id_usuario } = req.params;
@@ -100,7 +103,7 @@ router.delete('/usuarios/:id_usuario', async (req, res) => {
 //End Point de Login
 router.post('/login', async (req, res) => {
 
-    const {email, senha} = req.body;
+    const { email, senha } = req.body;
 
     //Validação de Entrada
     if (!email || !senha) {
@@ -119,12 +122,20 @@ router.post('/login', async (req, res) => {
         const senhaCorreta = await bcrypt.compare(senha, usuario.senha)
 
         //Verificar Senha se são iguais
-        if (!senhaCorreta ) {
+        if (!senhaCorreta) {
             return res.status(401).json({ message: 'Senha inválida' });
         }
 
+        //Gerando token para retornar o ser usado
+        const token = jwt.sign(
+            { id_usuario: usuario.id_usuario, email: usuario.email, nome: usuario.nome },
+            SECRET_KEY,
+            // {expiresIn: '15m'} //Tempo para expirar o token 
+        );
+
         return res.status(200).json({
             message: 'Login realizado com sucesso',
+            token: token,
             usuario: {
                 id: usuario.id_usuario,
                 nome: usuario.nome,

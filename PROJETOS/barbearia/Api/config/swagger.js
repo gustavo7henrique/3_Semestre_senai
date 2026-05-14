@@ -1,4 +1,5 @@
-import { application, request } from "express";
+// import { application, request } from "express";
+// import { status } from "express/lib/response";
 
 const documentacao = {
     openapi: '3.0.3',
@@ -272,7 +273,7 @@ const documentacao = {
                 }
             }
         },
-        "/transacoes": {
+        "/agendamentos": {
             get: {
                 tags: ["Agendamentos"],
                 summary: "Listar Agendamentos",
@@ -480,38 +481,33 @@ const documentacao = {
             },
 
             //Agendamentos
-            Lista_Transacoes: {
+            Lista_Agendamentos: {
                 type: "object",
                 properties: {
                     id: { type: "integer", example: 1 },
                     data_hora: { type: "string", example: "09/04/2026 14:30" },
+                    status: { type: "string", example: "Agendado" },
+                    id_cliente: { type: "integer", example: 1 },
+                    id_servico: { type: "integer", example: 1 }
                 }
             },
-            Cadastro_Transacoes: {
+            Cadastro_Agendamentos: {
                 type: "object",
                 properties: {
-                    valor: { type: "number", example: "100.00" },
-                    descricao: { type: "string", example: "descricao" },
-                    data_registro: { type: "string", example: "09/04/2026" },
-                    data_vencimento: { type: "string", example: "09/04/2026" },
-                    data_pagamento: { type: "string", example: "09/04/2026" },
-                    tipo: { type: "string", example: "E" },
-                    id_categoria: { type: "integer", example: 1 },
-                    id_subcategoria: { type: "integer", example: 1 }
+                    data_hora: { type: "string", example: "09/04/2026 14:30" },
+                    status: { type: "string", example: "Agendado" },
+                    id_cliente: { type: "integer", example: 1 },
+                    id_servico: { type: "integer", example: 1 }
                 }
             },
-            Atualizacao_Transacoes: {
+            Atualizacao_Agendamentos: {
                 type: "object",
-                required: ["valor", "descricao", "data_registro", "data_pagamento", "data_vencimento", "tipo", "id_categoria", "id_subcategoria"],
+                required: ["data_hora", "status", "id_cliente", "id_servico"],
                 properties: {
-                    valor: { type: "number", example: "00.00" },
-                    descricao: { type: "string", example: "nova_descricao" },
-                    data_registro: { type: "string", example: "01/01/2026" },
-                    data_vencimento: { type: "string", example: "01/01/2026" },
-                    data_pagamento: { type: "string", example: "01/01/2026" },
-                    tipo: { type: "string", example: "S" },
-                    id_categoria: { type: "integer", example: 1 },
-                    id_subcategoria: { type: "integer", example: 1 }
+                    data_hora: { type: "string", example: "09/04/2026 14:30" },
+                    status: { type: "string", example: "Agendado" },
+                    id_cliente: { type: "integer", example: 1 },
+                    id_servico: { type: "integer", example: 1 }
                 }
             }
         }

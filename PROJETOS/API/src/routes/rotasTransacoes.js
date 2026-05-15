@@ -163,6 +163,25 @@ router.get('/transacoes/subcategoria/:id_subcategoria', async (req, res) => {
     }
 });
 
+//Listar o valor total de transações
+router.get('/transacoes/total', async (req, res) => {
+
+    const { tipo } = req.query; //Pega o tipo E ou S
+
+    try {
+        const comando = `SELECT SUM(valor) AS total FROM transacoes WHERE tipo = $1`;
+
+        const resultado = await BD.query(comando, [tipo.toUpperCase()]);
+
+        return res.status(200).json({
+            tipo: tipo.toUpperCase(),
+            total: resultado.rows[0].total || 0
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erro ao calcular total de transações' + error.message });
+    }
+});
+
 //endpoint seguro contra sql injection
 router.post('/transacoes', async (req, res) => {
 
@@ -230,6 +249,29 @@ router.delete('/transacoes/:id_transacao', async (req, res) => {
         return res.status(500).json({ message: 'Erro interno no servidor' + error.message });
     }
 });
+
+
+//Informações do Dashboard
+
+// //Transações por categorias
+// router.get('dashboard/categorias', async (req, res) => {
+//     try {
+//         const comando = `
+//             SELECT c.nome, SUM(t.valor) AS total 
+//             FROM transacoes t 
+//             INNER JOIN categorias c ON t.id_categoria = c.id_categoria
+//             WHERE t.tipo = 'S'
+//             GROUP BY c.nome
+//             ORDER BY total DESC
+//         `
+//         const resultado = await BD.query(comando);
+//         return res.status(200).json(resultado.rows);
+//     } catch (error) {
+//         console.error('Erro ao buscar transações por categoria', error.message);
+//         return res.status(500).json({ error: 'Erro ao buscar transações por categoria' });
+//     }
+// });
+
 
 
 

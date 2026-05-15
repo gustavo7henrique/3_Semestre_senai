@@ -8,9 +8,13 @@ const documentacao = {
         version: '1.0.0'
     },
     servers: [
+        // {
+        //     url: 'http://localhost:3000',
+        //     description: 'Servidor Localhost'
+        // },
         {
-            url: 'http://localhost:3000',
-            description: 'Servidor Localhost'
+            url: 'https://api-ten-delta-38.vercel.app',
+            description: 'Servidor Vercel'
         }
     ],
     tags: [
@@ -18,10 +22,48 @@ const documentacao = {
         { name: "Usuários", description: "Operações relacionadas aos usuários" },
         { name: "Categorias", description: "Operações relacionadas as categorias" },
         { name: "SubCategorias", description: "Operações relacionadas as subcategorias" },
-        { name: "Transações", description: "Operações relacionadas as transações" }
+        { name: "Transações", description: "Operações relacionadas as transações" },
+        { name: "Dashboard", description: "Dados para o Dashboard" }
 
     ],
     paths: {
+        //Login
+        "/login": {
+            post: {
+                tags: ['Autenticação'],
+                summary: 'Realizar Login',
+                description: "Autentica um usuario e retorna id e nome",
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/Login_Usuario"
+                            }
+                        }
+                    }
+                },
+                responses: {
+                    200: {
+                        description: "Login realizado com sucesso!",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    $ref: "#/components/schemas/Resposta_Login"
+                                }
+                            }
+                        }
+                    },
+                    400: { description: "Email e senha são obrigatorios" },
+                    401: { description: "Credenciais inválidas" },
+                    500: {
+                        description: "Erro interno no servidor"
+                    }
+                }
+            }
+        },
+
+        //Usuários
         "/usuarios": {
             get: {
                 tags: ["Usuários"],
@@ -132,40 +174,8 @@ const documentacao = {
                 }
             }
         },
-        "/login": {
-            post: {
-                tags: ['Autenticação'],
-                summary: 'Realizar Login',
-                description: "Autentica um usuario e retorna id e nome",
-                requestBody: {
-                    required: true,
-                    content: {
-                        "application/json": {
-                            schema: {
-                                $ref: "#/components/schemas/Login_Usuario"
-                            }
-                        }
-                    }
-                },
-                responses: {
-                    200: {
-                        description: "Login realizado com sucesso!",
-                        content: {
-                            "application/json": {
-                                schema: {
-                                    $ref: "#/components/schemas/Resposta_Login"
-                                }
-                            }
-                        }
-                    },
-                    400: { description: "Email e senha são obrigatorios" },
-                    401: { description: "Credenciais inválidas" },
-                    500: {
-                        description: "Erro interno no servidor"
-                    }
-                }
-            }
-        },
+
+        //Categorias
         "/categorias": {
             get: {
                 tags: ["Categorias"],
@@ -273,6 +283,8 @@ const documentacao = {
                 }
             }
         },
+
+        //SubCategorias
         "/subcategorias": {
             get: {
                 tags: ["SubCategorias"],
@@ -380,6 +392,8 @@ const documentacao = {
                 }
             }
         },
+        
+        //Transações
         "/transacoes": {
             get: {
                 tags: ["Transações"],
@@ -607,6 +621,127 @@ const documentacao = {
                     }
                 }
             }
+        },
+        "/transacoes/total": {
+            get: {
+                tags: ["Transações"],
+                summary: "Listar Transações",
+                description: "Retorna o a soma de todos os valores com base no tipo informado (E / S)",
+                // security: [{ bearerAuth: [] }],
+                parameters: [{
+                    name: "tipo",
+                    in: "query",
+                    required: true,
+                    description: "Tipo transação (E = entrada / S = saída)",
+                    schema: { type: 'string', enum: ["E", "S"], example: 'E' },
+                }],
+                responses: {
+                    200: {
+                        description: "Dados obtidos com sucesso",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: { $ref: "#/components/schemas/Total_Transacoes" }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        },
+
+        //Dashboard
+        "/dashboard/categorias":{
+            get: {
+                tags: ["Dashboard"],
+                summary: "Total gastos por Categoria",
+                description: "Retorna a soma das saídas agrupadas por categoria",
+                // security: [{ bearerAuth: [] }],
+                responses: {
+                    200: {
+                        description: "Dados obtidos com sucesso",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: { 
+                                        type: "object",
+                                        properties:{
+                                            nome: { type: "string", example: "Alimentação" },
+                                            total: { type: "number", example: 1234.56 }
+                                        } 
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    500: {
+                        description: "Erro no Servidor"
+                    }
+                }
+            }  
+        },
+        "/dashboard/subcategorias":{
+            get: {
+                tags: ["Dashboard"],
+                summary: "Total gastos por Subcategoria",
+                description: "Retorna a soma das saídas agrupadas por subcategoria",
+                // security: [{ bearerAuth: [] }],
+                responses: {
+                    200: {
+                        description: "Dados obtidos com sucesso",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: { 
+                                        type: "object",
+                                        properties:{
+                                            nome: { type: "string", example: "Alimentação" },
+                                            total: { type: "number", example: 1234.56 }
+                                        } 
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    500: {
+                        description: "Erro no Servidor"
+                    }
+                }
+            }  
+        },
+        "/dashboard/maiores-gastos":{
+            get: {
+                tags: ["Dashboard"],
+                summary: "Top 5 Maiores Gastos",
+                description: "Retorna as 5 maiores transações de saídas",
+                // security: [{ bearerAuth: [] }],
+                responses: {
+                    200: {
+                        description: "Dados obtidos com sucesso",
+                        content: {
+                            "application/json": {
+                                schema: {
+                                    type: "array",
+                                    items: { 
+                                        type: "object",
+                                        properties:{
+                                            descricao: { type: "string", example: "Compra de alimentos" },
+                                            valor: { type: "number", example: 1234.56 },
+                                            data_registro: { type: "string", format: "date-time", example: "15/05/2026" }
+                                        } 
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    500: {
+                        description: "Erro no Servidor"
+                    }
+                }
+            }  
         }
 
     },
@@ -620,6 +755,36 @@ const documentacao = {
             }
         },
         schemas: {
+            //Login
+            Login_Usuario: {
+                type: "object",
+                required: ["email", "senha"],
+                properties: {
+                    email: { type: "string", example: "fulano@email.com" },
+                    senha: { type: "string", example: "2026" },
+                }
+            },
+            Resposta_Login: {
+                type: "object",
+                properties: {
+                    message: { type: 'string', example: 'Login realizado com sucesso' },
+                    token: {
+                        type: 'string',
+                        description: 'Token JWT gerado',
+                        example: 'eyJhbGciOi5ftd...'
+                    },
+                    usuario: {
+                        type: 'object',
+                        properties: {
+                            id_usuario: { type: 'integer', example: 1 },
+                            email: { type: "string", example: "gustavo@email.com" },
+                            senha: { type: "string", example: "2026" },
+                        }
+                    }
+                }
+            },
+
+            //Usuários
             Lista_Usuarios: {
                 type: "object",
                 properties: {
@@ -649,33 +814,8 @@ const documentacao = {
                     ativo: { type: "boolean", example: true }
                 }
             },
-            Login_Usuario: {
-                type: "object",
-                required: ["email", "senha"],
-                properties: {
-                    email: { type: "string", example: "fulano@email.com" },
-                    senha: { type: "string", example: "2026" },
-                }
-            },
-            Resposta_Login: {
-                type: "object",
-                properties: {
-                    message: { type: 'string', example: 'Login realizado com sucesso' },
-                    token: {
-                        type: 'string',
-                        description: 'Token JWT gerado',
-                        example: 'eyJhbGciOi5ftd...'
-                    },
-                    usuario: {
-                        type: 'object',
-                        properties: {
-                            id_usuario: { type: 'integer', example: 1 },
-                            email: { type: "string", example: "gustavo@email.com" },
-                            senha: { type: "string", example: "2026" },
-                        }
-                    }
-                }
-            },
+
+            //Categorias
             Lista_Categorias: {
                 type: "object",
                 properties: {
@@ -711,6 +851,8 @@ const documentacao = {
                     ativo: { type: "boolean", example: true }
                 }
             },
+
+            //SubCategorias
             Lista_SubCategorias: {
                 type: "object",
                 properties: {
@@ -737,6 +879,8 @@ const documentacao = {
                     id_categoria: { type: "integer", example: 1 },
                 }
             },
+
+            //Transações
             Lista_Transacoes: {
                 type: "object",
                 properties: {
@@ -776,6 +920,13 @@ const documentacao = {
                     tipo: { type: "string", example: "S" },
                     id_categoria: { type: "integer", example: 1 },
                     id_subcategoria: { type: "integer", example: 1 }
+                }
+            },
+            Total_Transacoes: {
+                type: "object",
+                properties: {
+                    total: { type: "number", format: "float", example: 1234.56, 
+                        description: "Soma total dos valores das transações filtardas" }
                 }
             }
         }

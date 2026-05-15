@@ -3,6 +3,7 @@ import rotasUsuarios from "./src/routes/rotasUsuarios.js";
 import rotasCategorias from "./src/routes/rotasCategorias.js";
 import rotasSubCategorias from "./src/routes/rotasSubCategorias.js";
 import rotasTransacoes from "./src/routes/rotasTransacoes.js";
+import Dashboard from "./src/routes/Dashboard.js";
 
 //Importando o Banco de Dados
 import { BD, testarConexao } from "./db.js";
@@ -27,6 +28,7 @@ app.use(rotasUsuarios);
 app.use(rotasCategorias);
 app.use(rotasSubCategorias);
 app.use(rotasTransacoes);
+app.use(Dashboard);
 app.use(cors());
 
 const porta = 3000;

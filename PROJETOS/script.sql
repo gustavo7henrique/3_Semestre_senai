@@ -5,7 +5,7 @@ nome varchar(100) not null,
 email varchar(150) not null,
 senha varchar(255) not null,
 tipo_acesso varchar(100) not null,
-ativo boolean default false
+ativo boolean default true
 );
 
 create table categorias(
@@ -15,7 +15,7 @@ descricao varchar(255) not null,
 tipo varchar(100) not null,
 cor varchar(20),
 icone varchar(155),
-ativo boolean default false
+ativo boolean default true
 );
 
 create table subcategorias(

@@ -8,14 +8,14 @@ const documentacao = {
         version: '1.0.0'
     },
     servers: [
-        // {
-        //     url: 'http://localhost:3000',
-        //     description: 'Servidor Localhost'
-        // },
         {
-            url: 'https://api-ten-delta-38.vercel.app',
-            description: 'Servidor Vercel'
-        }
+            url: 'http://localhost:3000',
+            description: 'Servidor Localhost'
+        },
+        // {
+        //     url: 'https://api-ten-delta-38.vercel.app',
+        //     description: 'Servidor Vercel'
+        // }
     ],
     tags: [
         { name: "Autenticação", description: "Login do Usuário" },

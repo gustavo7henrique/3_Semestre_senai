@@ -2,6 +2,7 @@ import express from 'express';
 import rotasUsuarios from "./Api/src/routes/rotasUsuarios.js";
 import rotasServicos from "./Api/src/routes/rotasServicos.js";
 import rotasAgendamentos from "./Api/src/routes/rotasAgendamentos.js";
+import rotasDashboard from "./Api/src/routes/rotasDashboard.js";
 
 //Importando o Banco de Dados
 import { BD, testarConexao } from "./db.js";
@@ -33,6 +34,7 @@ app.get('/', async (req, res) => {
 app.use(rotasUsuarios);
 app.use(rotasServicos);
 app.use(rotasAgendamentos);
+app.use(rotasDashboard);
 
 const porta = 3000;
 

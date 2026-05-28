@@ -1,16 +1,16 @@
-import { useNavigate, Link } from "react-router-dom";
-import { useState } from "react";
-import { enderecoServidor } from '../utils'
+import { View, Text, TextInput, Button } from 'react-native';
+import { useState } from 'react';
+import { enderecoServidor } from '../utils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Login() {
-    const navigate = useNavigate();
+export default function Login({ navigation }) {
+
 
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [mensagem, setMensagem] = useState('');
 
-    async function botaoEntrar(event) {
-        event.preventDefault()
+     async function botaoEntrar() {
         try {
             if (email == '' || senha == '') {
                 setMensagem('Preencha todos os campos')
@@ -27,6 +27,7 @@ export default function Login() {
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify(login)
             })
+
             if (resposta.status == 404) {
                 setMensagem(`Rota não encontrada: ${resposta.url}`)
                 return
@@ -39,8 +40,9 @@ export default function Login() {
             }
 
             if (resposta.ok) {
-                localStorage.setItem('UsuarioLogado', JSON.stringify(dados))
-                navigate('/principal')
+                // localStorage.setItem('UsuarioLogado', JSON.stringify(dados))
+                await AsyncStorage.setItem('UsuarioLogado', JSON.stringify(dados));
+                navigation.navigate('MenuDrawer')
             }
             else {
                 setMensagem('Email ou senha incoretos')
@@ -52,24 +54,27 @@ export default function Login() {
     }
 
     return (
-        <div>
+        <View >
+            <Text>Login</Text>
 
-            <h1>Tela de Login</h1>
-
-            <label>Email</label>
-            <input type="email" placeholder="Digite seu email"
-                value={email} onChange={(e) => setEmail(e.target.value)}
+            <Text>Email</Text>
+            <TextInput placeholder="Digite seu email"
+                value={email}
+                onChangeText={setEmail}
             />
-            <br />
-            <label>Senha</label>
-            <input type="password" placeholder="Digite sua senha"
-                value={senha} onChange={(e) => setSenha(e.target.value)}
+
+            <Text>Senha</Text>
+            <TextInput placeholder="Digite sua senha"
+                secureTextEntry={true}
+                value={senha}
+                onChangeText={setSenha}
             />
-            <br />
-            <button onClick={botaoEntrar}>Entrar</button>
 
-            <p style={{ color: '#f00' }}>{mensagem}</p>
+            <Button title="Entrar"
+                onPress={botaoEntrar}
+            />
 
-        </div>
-    );
-};
+            <Text style={{ color: 'red' }}>{mensagem}</Text>
+        </View>
+    )
+}

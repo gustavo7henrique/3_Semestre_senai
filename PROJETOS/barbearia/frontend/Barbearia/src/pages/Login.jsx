@@ -24,7 +24,7 @@ export default function Login() {
 
             const resposta = await fetch(`${enderecoServidor}/login`, {
                 method: 'POST',
-                headers: {'Content-Type' : 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(login)
             })
             if (resposta.status == 404) {

@@ -8,14 +8,14 @@ const documentacao = {
         version: '1.0.0'
     },
     servers: [
-        {
-            url: 'http://localhost:3000',
-            description: 'Servidor Localhost'
-        },
         // {
-        //     url: 'https://api-ten-delta-38.vercel.app',
-        //     description: 'Servidor Vercel'
-        // }
+        //     url: 'http://localhost:3000',
+        //     description: 'Servidor Localhost'
+        // },
+        {
+            url: 'https://api-ten-delta-38.vercel.app',
+            description: 'Servidor Vercel'
+        }
     ],
     tags: [
         { name: "Autenticação", description: "Login do Usuário" },
@@ -153,6 +153,11 @@ const documentacao = {
                 tags: ["Usuários"],
                 summary: "Deasativar o usuário",
                 description: "Desativa o usuário",
+                security: [
+                    {
+                        bearerAuth: []
+                    }
+                ],
                 parameters: [
                     {
                         name: "id_usuario",
@@ -392,7 +397,7 @@ const documentacao = {
                 }
             }
         },
-        
+
         //Transações
         "/transacoes": {
             get: {
@@ -652,7 +657,7 @@ const documentacao = {
         },
 
         //Dashboard
-        "/dashboard/categorias":{
+        "/dashboard/categorias": {
             get: {
                 tags: ["Dashboard"],
                 summary: "Total gastos por Categoria",
@@ -665,12 +670,12 @@ const documentacao = {
                             "application/json": {
                                 schema: {
                                     type: "array",
-                                    items: { 
+                                    items: {
                                         type: "object",
-                                        properties:{
+                                        properties: {
                                             nome: { type: "string", example: "Alimentação" },
                                             total: { type: "number", example: 1234.56 }
-                                        } 
+                                        }
                                     }
                                 }
                             }
@@ -680,9 +685,9 @@ const documentacao = {
                         description: "Erro no Servidor"
                     }
                 }
-            }  
+            }
         },
-        "/dashboard/subcategorias":{
+        "/dashboard/subcategorias": {
             get: {
                 tags: ["Dashboard"],
                 summary: "Total gastos por Subcategoria",
@@ -695,12 +700,12 @@ const documentacao = {
                             "application/json": {
                                 schema: {
                                     type: "array",
-                                    items: { 
+                                    items: {
                                         type: "object",
-                                        properties:{
+                                        properties: {
                                             nome: { type: "string", example: "Alimentação" },
                                             total: { type: "number", example: 1234.56 }
-                                        } 
+                                        }
                                     }
                                 }
                             }
@@ -710,9 +715,9 @@ const documentacao = {
                         description: "Erro no Servidor"
                     }
                 }
-            }  
+            }
         },
-        "/dashboard/maiores-gastos":{
+        "/dashboard/maiores-gastos": {
             get: {
                 tags: ["Dashboard"],
                 summary: "Top 5 Maiores Gastos",
@@ -725,13 +730,13 @@ const documentacao = {
                             "application/json": {
                                 schema: {
                                     type: "array",
-                                    items: { 
+                                    items: {
                                         type: "object",
-                                        properties:{
+                                        properties: {
                                             descricao: { type: "string", example: "Compra de alimentos" },
                                             valor: { type: "number", example: 1234.56 },
                                             data_registro: { type: "string", format: "date-time", example: "15/05/2026" }
-                                        } 
+                                        }
                                     }
                                 }
                             }
@@ -741,7 +746,7 @@ const documentacao = {
                         description: "Erro no Servidor"
                     }
                 }
-            }  
+            }
         }
 
     },
@@ -925,8 +930,10 @@ const documentacao = {
             Total_Transacoes: {
                 type: "object",
                 properties: {
-                    total: { type: "number", format: "float", example: 1234.56, 
-                        description: "Soma total dos valores das transações filtardas" }
+                    total: {
+                        type: "number", format: "float", example: 1234.56,
+                        description: "Soma total dos valores das transações filtardas"
+                    }
                 }
             }
         }

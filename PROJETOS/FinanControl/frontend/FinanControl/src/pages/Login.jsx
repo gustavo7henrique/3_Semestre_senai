@@ -1,13 +1,18 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { enderecoServidor } from '../utils'
+import logo from '../assets/foi.png'
+import { EstilosLogin } from '../styles/EstilosLogin'
+
+import { MdEmail, MdLock, MdVisibility, MdVisibilityOff } from 'react-icons/md'
 
 export default function Login() {
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState('');
-    const [senha, setSenha] = useState('');
+    const [email, setEmail] = useState('beltrano@email.com');
+    const [senha, setSenha] = useState('2027');
     const [mensagem, setMensagem] = useState('');
+    const [mostrarSenha, setMostrarSenha] = useState(false);
 
     async function botaoEntrar(event) {
         event.preventDefault()
@@ -17,15 +22,15 @@ export default function Login() {
                 return
             }
 
-            const login = {
+            const dadosLogin = {
                 "email": email,
                 "senha": senha
             }
 
             const resposta = await fetch(`${enderecoServidor}/login`, {
                 method: 'POST',
-                headers: {'Content-Type' : 'application/json'},
-                body: JSON.stringify(login)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dadosLogin)
             })
             if (resposta.status == 404) {
                 setMensagem(`Rota não encontrada: ${resposta.url}`)
@@ -51,24 +56,65 @@ export default function Login() {
         }
     }
 
+    const alternarVisibilidadeSenha = () => {
+        setMostrarSenha(!mostrarSenha)
+    }
+
     return (
-        <div>
+        <div style={EstilosLogin.container}>
 
-            <h1>Tela de Login</h1>
+            <header style={EstilosLogin.cabecalho}>
+                <img src={logo} style={EstilosLogin.iconeLogo} />
+                <div>
+                    <h1 style={EstilosLogin.nomeApp} >FinanControl</h1>
+                    <p style={EstilosLogin.subtituloApp} >O seu controle financeiro</p>
+                </div>
+            </header>
 
-            <label>Email</label>
-            <input type="email" placeholder="Digite seu email"
-                value={email} onChange={(e) => setEmail(e.target.value)}
-            />
-            <br />
-            <label>Senha</label>
-            <input type="password" placeholder="Digite sua senha"
-                value={senha} onChange={(e) => setSenha(e.target.value)}
-            />
-            <br />
-            <button onClick={botaoEntrar}>Entrar</button>
+            <main style={EstilosLogin.conteudoPrincipal}>
+                <form style={EstilosLogin.formularioLogin}>
+                    <h2 style={EstilosLogin.titulo}>Acesse sua conta</h2>
 
-            <p style={{ color: '#f00' }}>{mensagem}</p>
+                    <div style={EstilosLogin.grupoInput}>
+                        <MdEmail style={EstilosLogin.iconeInput} />
+                        <input type="email" style={EstilosLogin.input}
+                            placeholder="Digite seu email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+
+                    <div style={EstilosLogin.grupoInput}>
+                        <MdLock style={EstilosLogin.iconeInput} />
+                        <input type={mostrarSenha ? "text" : "password"} style={EstilosLogin.input}
+                            placeholder="Digite sua senha"
+                            value={senha}
+                            onChange={(e) => setSenha(e.target.value)}
+                        />
+
+                        <button type="button" onClick={alternarVisibilidadeSenha}
+                            style={EstilosLogin.alternarVisibilidade}
+                        >
+                            {mostrarSenha == true ? <MdVisibility /> : <MdVisibilityOff />}
+                        </button>
+                    </div>
+
+                    <div style={EstilosLogin.entreOpcoes}>
+                        <div style={EstilosLogin.containerCheckbox}>
+                            <input type="checkbox" style={EstilosLogin.checkbox} />
+                            <label>Lembrar-Me</label>
+                        </div>
+                        <a href="#" style={EstilosLogin.esqueceuSenha}>Esqueci a senha</a>
+                    </div>
+
+                    <button type="submit" style={EstilosLogin.botaoEntrar} onClick={botaoEntrar}>
+                        Entrar
+                    </button>
+
+                    <p style={EstilosLogin.mensagemFeedback}>{mensagem}</p>
+
+                </form>
+            </main>
 
         </div>
     );
